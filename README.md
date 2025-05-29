@@ -28,6 +28,11 @@ Este repositorio contiene ejemplos y consultas SQL aplicadas sobre datasets púb
 - `tutorial.crunchbase_*`
 - `tutorial.sf_crime_incidents_2014_01`
 
+## 📝 Fuente
+
+> Todos los ejercicios provienen del tutorial interactivo de SQL en Mode Analytics:  
+> 👉 [https://mode.com/sql-tutorial/sql](https://mode.com/sql-tutorial/sql)
+
 ---
 
-> Las consultas fueron probadas en entornos SQL de práctica como Mode Analytics y basadas en esquemas educativos.
+> Las consultas fueron probadas en entornos SQL de práctica como Mode Analytics y documentadas para referencia futura.
