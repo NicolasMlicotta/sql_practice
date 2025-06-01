@@ -1,3 +1,7 @@
+-- ============================================
+-- SQL PORTFOLIO – CONSULTAS AGRUPADAS POR TEMA
+-- ============================================
+
 -- US Housing Units
 SELECT year, month, south AS "Sur", west AS "West"
 FROM tutorial.us_housing_units
@@ -31,17 +35,17 @@ WHERE artist IN ('Taylor Swift', 'Usher', 'Ludacris');
 SELECT * FROM tutorial.billboard_top_100_year_end
 WHERE year_rank BETWEEN 5 AND 10;
 
--- Uso de IS NULL y NOT BETWEEN
 SELECT * FROM tutorial.billboard_top_100_year_end
 WHERE artist IS NULL;
 
 SELECT * FROM tutorial.billboard_top_100_year_end
-WHERE year = 2012
-  AND year_rank NOT BETWEEN 2 AND 3;
+WHERE year = 2012 AND year_rank NOT BETWEEN 2 AND 3;
 
 -- Apple Historical Stock Price
 SELECT COUNT(*) FROM tutorial.aapl_historical_stock_price;
+
 SELECT SUM(volume) AS total_volume FROM tutorial.aapl_historical_stock_price;
+
 SELECT MIN(volume), MAX(volume) FROM tutorial.aapl_historical_stock_price;
 
 SELECT year, month, COUNT(*) AS count
@@ -53,7 +57,7 @@ FROM tutorial.aapl_historical_stock_price
 GROUP BY year, month
 HAVING MAX(high) > 400;
 
--- CASE WHEN y lógica condicional
+-- CASE WHEN
 SELECT player_name, year,
   CASE WHEN year = 'SR' THEN 'yes' ELSE 'no' END AS is_senior
 FROM benn.college_football_players;
@@ -67,7 +71,7 @@ SELECT player_name, weight,
   END AS weight_group
 FROM benn.college_football_players;
 
--- JOINS
+-- JOINs
 SELECT teams.conference, AVG(players.weight) AS avg_weight
 FROM benn.college_football_players players
 JOIN benn.college_football_teams teams
@@ -75,7 +79,6 @@ JOIN benn.college_football_teams teams
 GROUP BY teams.conference
 ORDER BY avg_weight DESC;
 
--- Crunchbase: LEFT JOIN con condición
 SELECT companies.permalink, companies.name, companies.status,
        COUNT(investments.investor_permalink) AS investors
 FROM tutorial.crunchbase_companies companies
@@ -108,7 +111,6 @@ SELECT incidnt_num, descript,
   STRPOS(descript, 'A') AS a_position
 FROM tutorial.sf_crime_incidents_2014_01;
 
--- Concatenación y transformación de texto
 SELECT incidnt_num, day_of_week,
   CONCAT(day_of_week, ', ', LEFT(date, 10)) AS day_and_date
 FROM tutorial.sf_crime_incidents_2014_01;
@@ -119,10 +121,12 @@ SELECT CURRENT_DATE AS date,
        NOW() AS now;
 
 -- Subqueries
-SELECT *
-FROM tutorial.sf_crime_incidents_2014_01
-WHERE day_of_week = 'Friday'
-  AND resolution = 'NONE';
+SELECT sub.*
+FROM (
+  SELECT * FROM tutorial.sf_crime_incidents_2014_01
+  WHERE day_of_week = 'Friday'
+) sub
+WHERE sub.resolution = 'NONE';
 
 SELECT *
 FROM tutorial.sf_crime_incidents_2014_01
@@ -133,20 +137,95 @@ WHERE date IN (
   LIMIT 5
 );
 
--- Subquery + JOIN
 SELECT incidents.*, sub.incidents AS incidents_that_day
 FROM tutorial.sf_crime_incidents_2014_01 incidents
 JOIN (
-  SELECT date, COUNT(*) AS incidents
+  SELECT date, COUNT(incidnt_num) AS incidents
   FROM tutorial.sf_crime_incidents_2014_01
   GROUP BY date
 ) sub ON incidents.date = sub.date
 ORDER BY sub.incidents DESC, time;
 
--- UNION ALL con subquery
 SELECT COUNT(*) AS total_rows
 FROM (
   SELECT * FROM tutorial.crunchbase_investments_part1
   UNION ALL
   SELECT * FROM tutorial.crunchbase_investments_part2
 ) sub;
+
+-- Funciones de ventana
+SELECT duration_seconds,
+       SUM(duration_seconds) OVER (ORDER BY start_time) AS running_total
+FROM tutorial.dc_bikeshare_q1_2012;
+
+SELECT start_terminal,
+       duration_seconds,
+       SUM(duration_seconds) OVER (PARTITION BY start_terminal ORDER BY start_time) AS running_total
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08';
+
+SELECT start_terminal,
+       duration_seconds,
+       SUM(duration_seconds) OVER (PARTITION BY start_terminal) AS running_total,
+       COUNT(duration_seconds) OVER (PARTITION BY start_terminal) AS running_count,
+       AVG(duration_seconds) OVER (PARTITION BY start_terminal) AS running_avg
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08';
+
+SELECT start_terminal,
+       start_time,
+       duration,
+       ROW_NUMBER() OVER (ORDER BY start_time) AS row_number
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08';
+
+SELECT start_terminal,
+       start_time,
+       duration,
+       ROW_NUMBER() OVER (PARTITION BY start_terminal ORDER BY start_time) AS row_number
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08'
+ORDER BY start_terminal DESC, start_time DESC;
+
+SELECT start_terminal, duration_seconds,
+       RANK() OVER (PARTITION BY start_terminal ORDER BY start_time) AS rank
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08';
+
+SELECT start_terminal, duration_seconds,
+       DENSE_RANK() OVER (PARTITION BY start_terminal ORDER BY start_time) AS rank
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08';
+
+SELECT start_terminal, duration_seconds,
+       NTILE(4) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS quartile,
+       NTILE(5) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS quintile,
+       NTILE(100) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS percentile
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08' AND start_terminal = 31007;
+
+-- LAG y LEAD
+SELECT start_terminal, duration_seconds, 
+       LAG(duration_seconds, 1) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS lag,
+       LEAD(duration_seconds, 1) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS lead
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08'
+ORDER BY start_terminal, duration_seconds;
+
+-- Diferencia entre valores consecutivos
+SELECT start_terminal, duration_seconds,
+       duration_seconds - LAG(duration_seconds, 1) OVER (PARTITION BY start_terminal ORDER BY duration_seconds) AS difference
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08'
+ORDER BY start_terminal, duration_seconds;
+
+-- Definición de ventana reutilizable
+SELECT start_terminal,
+       duration_seconds,
+       NTILE(4) OVER ntile_window AS quartile,
+       NTILE(5) OVER ntile_window AS quintile,
+       NTILE(100) OVER ntile_window AS percentile
+FROM tutorial.dc_bikeshare_q1_2012
+WHERE start_time < '2012-01-08'
+WINDOW ntile_window AS (PARTITION BY start_terminal ORDER BY duration_seconds)
+ORDER BY start_terminal, duration_seconds;
