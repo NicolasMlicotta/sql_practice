@@ -9,15 +9,23 @@ Este repositorio contiene ejemplos y consultas SQL aplicadas sobre datasets púb
 ## Temas cubiertos
 
 - SELECT, WHERE, ORDER BY, LIMIT
-- Operadores: IN, BETWEEN, LIKE, ILIKE, IS NULL
+- Operadores: IN, BETWEEN, NOT BETWEEN, LIKE, ILIKE, IS NULL
 - Funciones de agregación: COUNT, SUM, AVG, MIN, MAX
-- Agrupaciones y filtros con GROUP BY y HAVING
+- Agrupaciones y filtros: GROUP BY, HAVING
 - CASE WHEN para lógica condicional
-- JOINS (LEFT, INNER, self joins)
-- Subqueries (en FROM, WHERE y JOIN)
-- Funciones de texto (LEFT, RIGHT, TRIM, STRPOS, SUBSTR, CONCAT)
-- Funciones de fecha y tiempo (EXTRACT, NOW, INTERVAL)
+- JOINS: LEFT JOIN, INNER JOIN, self joins
+- Subqueries: en FROM, WHERE y JOIN
+- Uniones de tablas: UNION ALL
+- Funciones de texto: LEFT, RIGHT, TRIM, STRPOS, SUBSTR, CONCAT
+- Funciones de fecha y tiempo: CURRENT_DATE, CURRENT_TIME, NOW, aritmética con timestamps
 - Limpieza y transformación de datos
+- Funciones de ventana (window functions): 
+  - ROW_NUMBER, RANK, DENSE_RANK, NTILE
+  - SUM, COUNT, AVG con OVER()
+  - LAG, LEAD
+  - Uso de PARTITION BY, ORDER BY en ventanas
+  - Definición de ventanas con WINDOW
+  - Cálculo de diferencias entre registros consecutivos
 
 ## Datasets utilizados
 
