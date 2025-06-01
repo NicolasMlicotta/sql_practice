@@ -39,7 +39,7 @@ Este repositorio contiene ejemplos y consultas SQL aplicadas sobre datasets púb
 ## Fuente
 
 > Todos los ejercicios provienen del tutorial interactivo de SQL en Mode Analytics:  
-> [https://mode.com/sql-tutorial](https://mode.com/sql-tutorial)]
+> [https://mode.com/sql-tutorial](https://mode.com/sql-tutorial)
 
 ---
 
