@@ -1,4 +1,4 @@
-# SQL Learning & Practice
+# SQL Practice
 
 Este repositorio contiene ejemplos y consultas SQL aplicadas sobre datasets públicos con fines de aprendizaje. Se abordan conceptos clave como filtros, agregaciones, joins, subqueries, manejo de fechas, limpieza de strings y más.
 
